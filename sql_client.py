@@ -11,14 +11,15 @@ def InsertToSQL(data):
 
     # SQL query to insert data into the 'courses' table
     insert_query = '''
-        INSERT INTO courses (course_code, pre_requisite, course_name, instructor, times, remaining_seats)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO courses (course_code, pre_requisite, course_name,section ,
+    credits, instructor ,times,campus, remaining_seats)
+        VALUES (?, ?, ?, ?, ?, ?,?,?,?)
     '''
+    print(data[0])
 
     cursor.execute("delete from courses where id > 0 ")
     # Insert the data into the table
-    for row in data:
-        print(len(row))
+
     cursor.executemany(insert_query, data)
 
     # Commit the changes
