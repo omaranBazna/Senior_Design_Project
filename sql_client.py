@@ -11,10 +11,18 @@ def InsertToSQL(data):
 
     # SQL query to insert data into the 'courses' table
     insert_query = '''
-        INSERT INTO courses (course_code, pre_requisite, course_name,section ,
-    credits, instructor ,times,campus, remaining_seats)
-        VALUES (?, ?, ?, ?, ?, ?,?,?,?)
+        INSERT INTO courses (course_code, course_name, pre_requisite,times )
+        VALUES (?, ?, ?, ?)
     '''
+    """
+    CREATE TABLE courses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_code TEXT,
+    course_name TEXT,
+    pre_requisite TEXT,
+    times TEXT
+);
+    """
     print(data[0])
 
     cursor.execute("delete from courses where id > 0 ")
