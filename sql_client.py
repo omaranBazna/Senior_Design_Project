@@ -37,3 +37,22 @@ def InsertToSQL(data):
     conn.close()
 
     print("Data inserted successfully.")
+
+def find_element(element):
+    database_str = "C:\omaran\SeniorDesignProject\database.db"
+    conn = sqlite3.connect(database_str)  # Replace with your database file
+
+    # Create a cursor object
+    cursor = conn.cursor()
+
+    # SQL query to insert data into the 'courses' table
+    select_query = '''
+        select * from courses where course_code = ?
+    '''
+    cursor.execute(select_query, (element,))  # Replace with your data
+
+    data = cursor.fetchall()
+    # Close the connection
+    conn.close()
+
+    return data
