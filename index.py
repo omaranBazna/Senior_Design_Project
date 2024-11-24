@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template
 from sql_client import get_all_elements
+from extract_evaluation import process_student_profile
 import os
 import json
 from flask_cors import CORS
@@ -33,7 +34,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return "I am up and health 😀"
+    return "I am up and healthy 😀"
 
 @app.route("/data")
 def get_all_data():
@@ -47,6 +48,7 @@ def get_all_courses():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # Check if the POST request has the file part
+
     if 'file' not in request.files:
         return "No file part", 400
     file = request.files['file']
@@ -55,10 +57,12 @@ def upload_file():
     if file.filename == '':
         return "No selected file", 400
 
-    if file and allowed_file(file.filename):
+    if file :
         filename = file.filename
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
         file.save(file_path)
+        return process_student_profile(file_path)
         return f"File uploaded successfully: {filename}"
     else:
         return "File not allowed", 400

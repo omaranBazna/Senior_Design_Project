@@ -148,7 +148,6 @@ def process_student_profile(file):
     # Step 1: Read and parse the MHTML file
     with open(mhtml_file, 'rb') as file:
         msg = message_from_binary_file(file)
-
     # Step 2: Find and decode the HTML part
     html_part = None
     for part in msg.walk():
@@ -162,13 +161,14 @@ def process_student_profile(file):
         # Decode HTML content if it is base64-encoded
         try:
             html_content = base64.b64decode(html_part).decode('utf-8')
+     
         except:
             html_content = html_part.decode('utf-8')
-
+    
         # Step 3: Parse the HTML with BeautifulSoup
-        soup = BeautifulSoup(html_content, 'lxml')
+        soup = BeautifulSoup(html_content, 'html')
 
-
+        
         # Example: Find all elements with class 'intro'
         NOs =  soup.select('[color="#EE0000"]')
         needed = []
@@ -179,7 +179,7 @@ def process_student_profile(file):
             list_courses = extract_courses(courses)
             if len(list_courses) > 0:
                 needed.append(list_courses)
-
+        
         YESs =  soup.select('[color="#000000"]')
         token = []
 
@@ -196,7 +196,7 @@ def process_student_profile(file):
                 subject = subject[0]
 
 
-                subjects_map = json.load(open("dictionary.json","r"))
+                subjects_map = json.load(open("full_courses.json","r"))
 
                 subject_description = subject
                 if subject in subjects_map:
@@ -207,8 +207,11 @@ def process_student_profile(file):
                     "course":course,
                     "grade":grade
                 })
-
-    create_student_plan(token,needed)        
+    
+    return {
+        "token":token,"needed":needed
+    }
+    #create_student_plan(token,needed)        
 
 
 
