@@ -45,7 +45,8 @@ def extract_courses(courses):
                     
                 if window.isdigit():
                     course_name = sub_string +" "+ window
-                    courses_list.append(course_name)
+                    course_row = find_element(course_name)
+                    courses_list.append({"name":course_name,"details":course_row})
                 u += 1
                 i += 1
 

@@ -49,9 +49,12 @@ def find_element(element):
     select_query = '''
         select * from courses where course_code = ?
     '''
+    print(element)
     cursor.execute(select_query, (element,))  # Replace with your data
 
     data = cursor.fetchall()
+    print(data)
+    print("--------------")
     # Close the connection
     conn.close()
 
