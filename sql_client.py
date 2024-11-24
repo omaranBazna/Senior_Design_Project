@@ -25,7 +25,7 @@ def InsertToSQL(data):
     """
     print(data[0])
 
-    cursor.execute("delete from courses where id > 0 ")
+    #cursor.execute("delete from courses where id > 0 ")
     # Insert the data into the table
 
     cursor.executemany(insert_query, data)
@@ -50,6 +50,26 @@ def find_element(element):
         select * from courses where course_code = ?
     '''
     cursor.execute(select_query, (element,))  # Replace with your data
+
+    data = cursor.fetchall()
+    # Close the connection
+    conn.close()
+
+    return data
+
+
+def get_all_elements():
+    database_str = "C:\omaran\SeniorDesignProject\database.db"
+    conn = sqlite3.connect(database_str)  # Replace with your database file
+
+    # Create a cursor object
+    cursor = conn.cursor()
+
+    # SQL query to insert data into the 'courses' table
+    select_query = '''
+        select * from courses
+    '''
+    cursor.execute(select_query)  # Replace with your data
 
     data = cursor.fetchall()
     # Close the connection

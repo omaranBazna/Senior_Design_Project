@@ -136,14 +136,14 @@ def get_pages_count(driver):
     return  int(total_pages)
 
 def open_section_details(driver,cell):
-    time.sleep(0.5)
+    time.sleep(1)
     try:
         link = cell.find_element(By.CLASS_NAME,"section-details-link")
         highlight_element(driver,link,color="red")
         link.click()
     except Exception:
        print("link not found")
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 def add_course_num(course_subject,driver,row_el):
@@ -153,11 +153,10 @@ def add_course_num(course_subject,driver,row_el):
     except Exception:
         course_number = "0000"
     row_el.append(course_subject + " " +course_number.text)
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 def add_pre_req(driver,row_el):
-    log_message(driver,"check pre-requests")
     try:
         time.sleep(1)
         pre_req = driver.find_element(By.CSS_SELECTOR,"#preReqs a")
@@ -193,15 +192,17 @@ def add_pre_req(driver,row_el):
             close_button.click()
         except Exception:
             print("close button not found")
-        time.sleep(0.5)
+        time.sleep(1)
     else:
         row_el.append("None")
 
 
-def add_meeting_times(cell,row_el):
+def add_meeting_times(driver,cell,row_el):
     try:
         divs = cell.find_elements(By.CLASS_NAME,"meeting")
-    except:
+
+    except Exception as e:
+        print(str(e))
         print("can not find meetings times")
         divs = []
     index_2 = 0
@@ -213,8 +214,10 @@ def add_meeting_times(cell,row_el):
         except Exception:
             full_text = "not found"
         if "class" in full_text.lower() or "online course" in full_text.lower():
+            highlight_element(driver,div_el,color="green")
             try:
                 highlighted = div_el.find_elements(By.CLASS_NAME,"ui-state-highlight")
+                
                 for index_3 in range(len(highlighted)):
                     el = highlighted[index_3]
                     times += el.get_attribute("data-name")
@@ -253,7 +256,7 @@ def process_table_cell(cell,index,driver,row_el,course_subject):
         add_pre_req(driver,row_el)
 
     if index == 8:
-        add_meeting_times(cell,row_el)
+        add_meeting_times(driver,cell,row_el)
 
 def extractTableRow(row,table_cells,driver,extracted_rows):
     try:
@@ -289,6 +292,7 @@ def extractTableRow(row,table_cells,driver,extracted_rows):
             highlight_element(driver, cell)
             process_table_cell(cell,index,driver,row_el,course_subject)
             index += 1
+        log_message(driver,str(row_el))
         table_cells.append(row_el)
     except Exception as e:
         print(str(e))
@@ -297,16 +301,16 @@ def extractTableRow(row,table_cells,driver,extracted_rows):
 
 
 def extractPageData(driver,table_cells ,extracted_row,extracted_page):
-    time.sleep(0.5)
+    time.sleep(1)
     try:
         table = driver.find_element(by=By.TAG_NAME,value="tbody")
         rows = table.find_elements(By.TAG_NAME, "tr")
         subjects_dic["extracted_page"] = extracted_page[0]
         extracted_page[0] += 1
-        
-        for _ , row in enumerate(rows):
-             extractTableRow(row,table_cells,driver,extracted_row[0])
-             extracted_row[0] += 1
+        if(extracted_page[0]>3):
+            for _ , row in enumerate(rows):
+                 extractTableRow(row,table_cells,driver,extracted_row[0])
+                 extracted_row[0] += 1
         time.sleep(1)
         next_button = driver.find_element(by=By.CLASS_NAME,value="next")
         next_button.click()
@@ -319,19 +323,19 @@ def extractData(url,semester,major):
     drop_down = search_for_semester(driver,semester)
     click_search_button(driver,drop_down,major)
     set_per_page(driver)
-    time.sleep(2)
+    time.sleep(1)
     add_log_window(driver )
     count = get_pages_count(driver)
     table_cells = []
     extracted_row = [0]
     extracted_page = [0]
     for _ in range(count):
-        time.sleep(2)
+        time.sleep(1)
         extractPageData(driver,table_cells,extracted_row,extracted_page)
 
-    print(subjects_dic)
-    #makeExcel(table_cells)
-    #InsertToSQL(table_cells)
+    #print(subjects_dic)
+    makeExcel(table_cells)
+    InsertToSQL(table_cells)
 
 
 
