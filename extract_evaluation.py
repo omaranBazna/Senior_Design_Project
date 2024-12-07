@@ -89,37 +89,41 @@ def process_logical_operations(lst):
 
 
 def check_if_pre_req_met(token,course):
+    if( course == "None") : return False
+    if( len(course) == 0) : return False
+
+
     pre_req = ast.literal_eval(course[0][3])
     course_name = course[0][1]
+    print(pre_req)
     if pre_req == None:   # Case 1 : no pre-req
-        print(f"no preq for {course[0][2]}") 
+
         return True
     
     if len(pre_req) == 1:
         pre_req = pre_req[0].split(",")  
 
         if find_if_course_has_been_done(token, pre_req):
-            print(course_name+" has all pre-req met")
+  
             return True
         else:
-            print(course_name+" has some pre-req not met yet")
-            print(f"Un met pre-req is {pre_req[0]}")
+
             return False
-    print(pre_req)
+    
     for i in range(len(pre_req)):
         element = pre_req[i]
         if element == "or" or element == "and":
             continue
         pre_req_details = pre_req[i].split(",")
         pre_req[i] = find_if_course_has_been_done(token, pre_req_details)
-    print(pre_req)
+
     met = (process_logical_operations(pre_req))
-    print(met)
+
     if met:
-        print(f"Pre requesits for {course_name} are met")
+
         return True
     else:
-        print(f"Pre requesits for {course_name} are not met")
+    
         return False 
     
 
@@ -208,6 +212,16 @@ def process_student_profile(file):
                     "course":course,
                     "grade":grade
                 })
+  
+    for i in range(0,len(needed)):
+        print(len(needed[i]))
+        for k in range(0,len(needed[i])):
+            details = needed[i][k]["details"]
+            for u in range(0,len(details)):
+                needed[i][k]["details"][u] = details[u] + (check_if_pre_req_met(token,needed[i][0]["details"]),)
+
+       
+
     
     return {
         "token":token,"needed":needed
