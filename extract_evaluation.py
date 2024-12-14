@@ -172,8 +172,23 @@ def process_student_profile(file):
     
         # Step 3: Parse the HTML with BeautifulSoup
         soup = BeautifulSoup(html_content, 'html')
-
-        
+        tables = soup.find_all('table')
+        areas = []
+        for i in range(len(tables)):
+            table = tables[i]
+            new_area={}
+            caption = table.find('caption')
+            if caption is not None:
+                new_area["caption"] = caption.text.strip()
+                NOs = table.select('[color="#EE0000"]')
+                new_area["courses"] = []
+                for no in NOs:
+                    row = no.parent.parent
+                    tds = row.find_all("td")
+                    courses = tds[1].text
+                    new_area["courses"].append(courses)
+                areas.append(new_area)
+        print(areas)
         # Example: Find all elements with class 'intro'
         NOs =  soup.select('[color="#EE0000"]')
         needed = []
