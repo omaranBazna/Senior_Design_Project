@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import Select
 
 import time
 from excel import makeExcel
-from sql_client import InsertToSQL
+from sql_client import InsertToSQL,InsertElementToSQL
 import re
 import json
 
@@ -246,17 +246,33 @@ def add_course_name(driver,cell,row_el):
         log_message(driver,"does not find the cell")
         row_el.append("Name")
 
+def add_course_attribute(attribute,row_el):
+    row_el.append(attribute)
+
 def process_table_cell(cell,index,driver,row_el,course_subject):
+
+    
     if index == 0:
-        
         open_section_details(driver,cell)
         add_course_num(course_subject,driver,row_el)
         add_course_name(driver,cell,row_el)
         time.sleep(1)
         add_pre_req(driver,row_el)
 
+    if index == 4:
+        section = cell.get_attribute("textContent")
+        row_el.append(section)
+
+
+    if index == 5:
+        hours = cell.get_attribute("textContent")
+        row_el.append(hours)
+
     if index == 8:
         add_meeting_times(driver,cell,row_el)
+    
+    if index == 12:
+        add_course_attribute(cell.text,row_el)
 
 def extractTableRow(row,table_cells,driver,extracted_rows):
     try:
@@ -311,6 +327,8 @@ def extractPageData(driver,table_cells ,extracted_row,extracted_page):
             for _ , row in enumerate(rows):
                  extractTableRow(row,table_cells,driver,extracted_row[0])
                  extracted_row[0] += 1
+                 InsertElementToSQL(table_cells[-1])
+
         time.sleep(1)
         next_button = driver.find_element(by=By.CLASS_NAME,value="next")
         next_button.click()
@@ -335,7 +353,7 @@ def extractData(url,semester,major):
 
     #print(subjects_dic)
     makeExcel(table_cells)
-    InsertToSQL(table_cells)
+    #InsertToSQL(table_cells)
 
 
 

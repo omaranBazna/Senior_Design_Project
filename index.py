@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template
-from sql_client import get_all_elements
-from extract_evaluation import process_student_profile
+from sql_client import get_all_elements,find_element,find_element_by_attr_only,get_attr_list_elements
+from extract_evaluation import process_student_profile,check_if_pre_req_met
 import os
 import json
 from flask_cors import CORS
@@ -66,6 +66,61 @@ def upload_file():
         return f"File uploaded successfully: {filename}"
     else:
         return "File not allowed", 400
+
+
+def is_valid_course_code(course_string):
+    import re
+    # Regular expression for course code and number
+    pattern = r'^[A-Z]{2,4} \d{4}$'
+    return bool(re.match(pattern, course_string))
+
+@app.route("/check_course",methods=["POST"])
+def check_course():
+    data = request.get_json()
+    
+    course = data["data"]
+    if not is_valid_course_code(course):
+        return {"error":True, "msg":"not valid course"}
+
+    if not "token" in data:
+        return {"error":True, "msg":"missing token courses"}
+    
+    rows = find_element(course)
+    if(len(rows)==0):
+        return {"msg":"Not in winter"}
+    msg = "Not met"
+    result = []
+    for i in range(len(rows)):
+        row = rows[i]
+        if check_if_pre_req_met(data["token"],row):
+            result.append(row)
+    msg = ""
+    return {"msg":msg,"rows":result}
+
+@app.route("/check_attr",methods=["POST"])
+def check_attr():
+    data = request.get_json()
+    attr = data["data"]
+    print(attr)
+    if not "token" in data:
+        return {"error":True, "msg":"missing token courses"}
+    
+    result = []
+
+    rows = find_element_by_attr_only(attr)
+    for i in range(len(rows)):
+        row = rows[i]
+        if(check_if_pre_req_met(data["token"],row)):
+            result.append(row)
+
+
+    return {"rows":result,"msg":""}
+
+
+@app.route("/get-attr-list",methods=["GET"])
+def get_attr_list():
+
+    return get_attr_list_elements()
 
 if __name__ == '__main__':
     app.run(debug=True)

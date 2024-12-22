@@ -93,8 +93,8 @@ def check_if_pre_req_met(token,course):
     if( len(course) == 0) : return False
 
 
-    pre_req = ast.literal_eval(course[0][3])
-    course_name = course[0][1]
+    pre_req = ast.literal_eval(course[3])
+ 
     print(pre_req)
     if pre_req == None:   # Case 1 : no pre-req
 
@@ -188,8 +188,8 @@ def process_student_profile(file):
                     courses = tds[1].text
                     new_area["courses"].append(courses)
                 areas.append(new_area)
-        print(areas)
-        # Example: Find all elements with class 'intro'
+
+        """# Example: Find all elements with class 'intro'
         NOs =  soup.select('[color="#EE0000"]')
         needed = []
         for no in NOs:
@@ -199,7 +199,8 @@ def process_student_profile(file):
             list_courses = extract_courses(courses)
             if len(list_courses) > 0:
                 needed.append(list_courses)
-        
+        """
+ 
         YESs =  soup.select('[color="#000000"]')
         token = []
 
@@ -227,19 +228,19 @@ def process_student_profile(file):
                     "course":course,
                     "grade":grade
                 })
-  
+    """
     for i in range(0,len(needed)):
         print(len(needed[i]))
         for k in range(0,len(needed[i])):
             details = needed[i][k]["details"]
             for u in range(0,len(details)):
                 needed[i][k]["details"][u] = details[u] + (check_if_pre_req_met(token,needed[i][0]["details"]),)
-
+    """
        
 
     
     return {
-        "token":token,"needed":needed
+        "token":token,"areas":areas
     }
     #create_student_plan(token,needed)        
 
