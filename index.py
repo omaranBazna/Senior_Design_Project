@@ -71,7 +71,8 @@ def upload_file():
 def is_valid_course_code(course_string):
     import re
     # Regular expression for course code and number
-    pattern = r'^[A-Z]{2,4} \d{4}$'
+    print(course_string)
+    pattern = r'^[A-Z]{2,4}\s+\d{4}$'
     return bool(re.match(pattern, course_string))
 
 @app.route("/check_course",methods=["POST"])
