@@ -8,6 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 
+port = os.getenv("PORT", 8000)
+
 def read_file(file_name):
     file = open(file=file_name,mode="r")
     try:
@@ -124,20 +126,4 @@ def get_attr_list():
     return get_attr_list_elements()
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-"""
-from data import extractData
-from extract_evaluation import process_student_profile
-
-url = "https://reg-prod.ec.udmercy.edu/StudentRegistrationSsb/ssb/classSearch/classSearch"
-semester = "Winter 2024"
-major = ""
-
-extractData(url,semester,major)
-
-student_file = "test.mhtml"
-
-process_student_profile(student_file)
-
-"""
+    app.run(debug=True,port=port)
