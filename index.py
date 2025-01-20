@@ -45,8 +45,7 @@ def index():
 
 @app.route("/data")
 def get_all_data():
-    print("get all data")
-    return []
+   
     return get_all_elements()
 
 @app.route("/courses")
