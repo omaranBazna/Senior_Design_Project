@@ -2,8 +2,11 @@ import sqlite3
 import re
 # Connect to the SQLite database (or create it if it doesn't exist)
 
+
+database_str="./database_2.db"
+
 def InsertToSQL(data):
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+   
     conn = sqlite3.connect(database_str)  # Replace with your database file
 
     # Create a cursor object
@@ -38,7 +41,7 @@ def InsertElementToSQL(element):
     print(element)
     print(len(element))
 
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+   
     conn = sqlite3.connect(database_str)  # Replace with your database file
     check_element  = find_element_section(element[0],element[3])
     print(check_element)
@@ -69,7 +72,7 @@ def replace_with_normal_space(text):
 
 def find_element(element):
     element = replace_with_normal_space(element)
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+    
     conn = sqlite3.connect(database_str)  # Replace with your database file
 
     # Create a cursor object
@@ -87,7 +90,7 @@ def find_element(element):
     return data
 
 def find_element_by_attr_only(attribute):
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+   
     conn = sqlite3.connect(database_str)  # Replace with your database file
 
     # Create a cursor object
@@ -108,7 +111,7 @@ def find_element_by_attr_only(attribute):
 
 
 def get_attr_list_elements():
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+   
     conn = sqlite3.connect(database_str)  # Replace with your database file
 
     # Create a cursor object
@@ -128,7 +131,7 @@ def get_attr_list_elements():
     return data
 
 def find_element_section(element,section):
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+   
     conn = sqlite3.connect(database_str)  # Replace with your database file
 
     # Create a cursor object
@@ -147,7 +150,7 @@ def find_element_section(element,section):
 
 
 def get_all_elements():
-    database_str = "C:\omaran\SeniorDesignProject\database_2.db"
+   
     conn = sqlite3.connect(database_str)  # Replace with your database file
 
     # Create a cursor object
