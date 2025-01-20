@@ -6,7 +6,8 @@ import json
 from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
-CORS(app,origins=["https://thunderous-tartufo-7ce2f7.netlify.app/"])
+CORS(app,origins=["https://thunderous-tartufo-7ce2f7.netlify.app/"],
+origin="https://senior-design-project.onrender.com/")
 
 
 port = os.getenv("PORT", 8000)
