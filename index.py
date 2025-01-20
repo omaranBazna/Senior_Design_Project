@@ -7,7 +7,7 @@ from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": ["https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com"]}})
+CORS(app, resources={r"/*": {"origins": ["https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app/"]}})
 
 
 
