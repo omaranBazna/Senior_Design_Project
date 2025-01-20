@@ -1,5 +1,5 @@
 import sqlite3
-
+import re
 # Connect to the SQLite database (or create it if it doesn't exist)
 
 def InsertToSQL(data):
@@ -63,8 +63,12 @@ def InsertElementToSQL(element):
 
     print("Data inserted successfully.")
 
+def replace_with_normal_space(text):
+    # Replace all types of whitespace characters with a normal space
+    return re.sub(r'\s+', ' ', text)
 
 def find_element(element):
+    element = replace_with_normal_space(element)
     database_str = "C:\omaran\SeniorDesignProject\database_2.db"
     conn = sqlite3.connect(database_str)  # Replace with your database file
 

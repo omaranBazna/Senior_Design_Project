@@ -6,8 +6,10 @@ import json
 from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
+
+port = os.getenv("PORT", 8000)
 
 def read_file(file_name):
     file = open(file=file_name,mode="r")
@@ -76,7 +78,8 @@ def upload_file():
 def is_valid_course_code(course_string):
     import re
     # Regular expression for course code and number
-    pattern = r'^[A-Z]{2,4} \d{4}$'
+    print(course_string)
+    pattern = r'^[A-Z]{2,4}\s+\d{4}$'
     return bool(re.match(pattern, course_string))
 
 @app.route("/check_course",methods=["POST"])
@@ -131,20 +134,4 @@ def get_attr_list():
     return get_attr_list_elements()
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-"""
-from data import extractData
-from extract_evaluation import process_student_profile
-
-url = "https://reg-prod.ec.udmercy.edu/StudentRegistrationSsb/ssb/classSearch/classSearch"
-semester = "Winter 2024"
-major = ""
-
-extractData(url,semester,major)
-
-student_file = "test.mhtml"
-
-process_student_profile(student_file)
-
-"""
+    app.run(debug=True,port=port,host="0.0.0.0")
