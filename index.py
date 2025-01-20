@@ -6,8 +6,7 @@ import json
 from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000",
-"origin": "https://slug-panel.onrender.com"}})
+CORS(app,origins=["https://thunderous-tartufo-7ce2f7.netlify.app/"])
 
 
 port = os.getenv("PORT", 8000)
