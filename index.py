@@ -6,7 +6,8 @@ import json
 from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000",
+"origin": "https://slug-panel.onrender.com"}})
 
 
 port = os.getenv("PORT", 8000)
@@ -36,23 +37,23 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
-@cross_origin()
+
 def index():
     return "I am up and healthy 😀"
 
 @app.route("/data")
-@cross_origin()
+
 def get_all_data():
     return get_all_elements()
 
 @app.route("/courses")
-@cross_origin()
+
 def get_all_courses():
     return read_file("full_courses.json")
 
 
 @app.route('/upload', methods=['POST'])
-@cross_origin()
+
 def upload_file():
     # Check if the POST request has the file part
 
@@ -83,7 +84,7 @@ def is_valid_course_code(course_string):
     return bool(re.match(pattern, course_string))
 
 @app.route("/check_course",methods=["POST"])
-@cross_origin()
+
 def check_course():
     data = request.get_json()
     
@@ -107,7 +108,7 @@ def check_course():
     return {"msg":msg,"rows":result}
 
 @app.route("/check_attr",methods=["POST"])
-@cross_origin()
+
 def check_attr():
     data = request.get_json()
     attr = data["data"]
@@ -128,7 +129,7 @@ def check_attr():
 
 
 @app.route("/get-attr-list",methods=["GET"])
-@cross_origin()
+
 def get_attr_list():
 
     return get_attr_list_elements()
