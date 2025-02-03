@@ -6,8 +6,9 @@ import json
 from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
+from data import extractData
 
-CORS(app, resources={r"/*": {"origins": ["https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app"]}})
+CORS(app, resources={r"/*": {"origins": ["https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app","http://localhost:3000"]}})
 
 
 
@@ -128,6 +129,19 @@ def check_attr():
 
 
     return {"rows":result,"msg":""}
+
+
+@app.route('/create_db', methods=['POST'])
+def create_db():
+    year = request.form.get('year')
+    semester = request.form.get('semester')
+    
+    url = "https://reg-prod.ec.udmercy.edu/StudentRegistrationSsb/ssb/classSearch/classSearch"
+    major = ""
+
+    extractData(url,semester+" "+year,major)
+    
+    
 
 
 @app.route("/get-attr-list",methods=["GET"])

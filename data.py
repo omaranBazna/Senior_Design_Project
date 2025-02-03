@@ -323,7 +323,7 @@ def extractPageData(driver,table_cells ,extracted_row,extracted_page):
         rows = table.find_elements(By.TAG_NAME, "tr")
         subjects_dic["extracted_page"] = extracted_page[0]
         extracted_page[0] += 1
-        if(extracted_page[0]>3):
+        if(extracted_page[0]>-1):  # change to set start page
             for _ , row in enumerate(rows):
                  extractTableRow(row,table_cells,driver,extracted_row[0])
                  extracted_row[0] += 1
