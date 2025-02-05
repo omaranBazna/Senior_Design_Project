@@ -8,7 +8,7 @@ from flask_cors import cross_origin
 app = Flask(__name__)
 from data import extractData
 import shutil
-CORS(app, resources={r"/*": {"origins": ["https://stellular-axolotl-d0a978.netlify.app","https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app","http://localhost:3000","http://localhost:8000","https://lovely-nasturtium-ed889c.netlify.app"]}})
+CORS(app, resources={r"/*": {"origins": ["https://phenomenal-kulfi-a98ace.netlify.app","https://stellular-axolotl-d0a978.netlify.app","https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app","http://localhost:3000","http://localhost:8000","https://lovely-nasturtium-ed889c.netlify.app"]}})
 
 
 
