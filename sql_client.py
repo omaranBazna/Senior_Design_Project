@@ -3,11 +3,12 @@ import re
 # Connect to the SQLite database (or create it if it doesn't exist)
 
 
-database_str="./database_2.db"
+database_str_persistant="./persistant.db"
+database_str_temp="./temp.db"
 
 def InsertToSQL(data):
    
-    conn = sqlite3.connect(database_str)  # Replace with your database file
+    conn = sqlite3.connect(database_str_temp)  # Replace with your database file
 
     # Create a cursor object
     cursor = conn.cursor()
@@ -42,8 +43,8 @@ def InsertElementToSQL(element):
     print(len(element))
 
    
-    conn = sqlite3.connect(database_str)  # Replace with your database file
-    check_element  = find_element_section(element[0],element[3])
+    conn = sqlite3.connect(database_str_temp)  # Replace with your database file
+    check_element  = find_element_section_temp(element[0],element[3])
     print(check_element)
     print("-----------")
     if len(check_element) > 0: 
@@ -73,7 +74,7 @@ def replace_with_normal_space(text):
 def find_element(element):
     element = replace_with_normal_space(element)
     
-    conn = sqlite3.connect(database_str)  # Replace with your database file
+    conn = sqlite3.connect(database_str_persistant)  # Replace with your database file
 
     # Create a cursor object
     cursor = conn.cursor()
@@ -91,7 +92,7 @@ def find_element(element):
 
 def find_element_by_attr_only(attribute):
    
-    conn = sqlite3.connect(database_str)  # Replace with your database file
+    conn = sqlite3.connect(database_str_persistant)  # Replace with your database file
 
     # Create a cursor object
     cursor = conn.cursor()
@@ -109,10 +110,9 @@ def find_element_by_attr_only(attribute):
 
     return data
 
-
 def get_attr_list_elements():
    
-    conn = sqlite3.connect(database_str)  # Replace with your database file
+    conn = sqlite3.connect(database_str_persistant)  # Replace with your database file
 
     # Create a cursor object
     cursor = conn.cursor()
@@ -132,7 +132,7 @@ def get_attr_list_elements():
 
 def find_element_section(element,section):
    
-    conn = sqlite3.connect(database_str)  # Replace with your database file
+    conn = sqlite3.connect(database_str_persistant)  # Replace with your database file
 
     # Create a cursor object
     cursor = conn.cursor()
@@ -149,9 +149,29 @@ def find_element_section(element,section):
     return data
 
 
+def find_element_section_temp(element,section):
+   
+    conn = sqlite3.connect(database_str_temp)  # Replace with your database file
+
+    # Create a cursor object
+    cursor = conn.cursor()
+
+    # SQL query to insert data into the 'courses' table
+    select_query = '''
+        select * from courses where course_code = ? and section = ?
+    '''
+    cursor.execute(select_query, (element,section))  # Replace with your data
+    data = cursor.fetchall()
+    # Close the connection
+    conn.close()
+
+    return data
+
+
+
 def get_all_elements():
    
-    conn = sqlite3.connect(database_str)  # Replace with your database file
+    conn = sqlite3.connect(database_str_persistant)  # Replace with your database file
 
     # Create a cursor object
     cursor = conn.cursor()
@@ -169,4 +189,12 @@ def get_all_elements():
     return data
 
 
-
+def clear_all():
+    try:
+        with sqlite3.connect(database_str_temp) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM courses where id>0")  # Removes all rows
+            conn.commit()  # Commit the changes
+            print("All courses deleted successfully.")
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")

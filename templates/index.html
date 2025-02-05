@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+        input, select {
+            margin-left: 10px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: black;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Please select the year and semester</h1>
+    <div>Make sure to run the local server to create the schedule.</div>
+    <div id="error" class="error"></div>
+    
+    <form id="dbForm" method="post" action="/create_db">
+        <label>
+            Year:
+            <input type="number" min="2020" max="2050" name="year" required>
+        </label>
+
+        <label>
+            Semester:
+            <select name="semester" required>
+                <option value="Winter">Winter</option>
+                <option value="Summer">Summer</option>
+                <option value="Fall">Fall</option>
+            </select>
+        </label>
+
+        <label>
+            Start page:
+            <input type="number" name="startPage" required>
+        </label>
+
+        <label>
+            End page:
+            <input type="number" name="endPage" required>
+        </label>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div class="divider"></div>
+    
+    <button id="clearDatabase">Clear local database</button>
+    
+    <div class="divider"></div>
+    
+    <button id="downloadDatabase">Download local database</button>
+    
+    <div class="divider"></div>
+    
+    <!-- Upload Form -->
+    <h2>Upload Database File</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label>
+            Select database file:
+            <input type="file" name="dbFile" id="dbFile" accept=".db" required>
+        </label>
+        <button type="submit">Upload</button>
+    </form>
+
+    <div class="divider"></div>
+    <button id="resetDatabase">Reset Database (Winter 2024)</button>
+
+
+    <script>
+          document.getElementById("resetDatabase").addEventListener("click", function() {
+        fetch("https://senior-design-project.onrender.com/reset_2024")
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => alert("Error occurred: " + error));
+    });
+        document.getElementById('dbForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const startPage = parseInt(formData.get('startPage'), 10);
+            const endPage = parseInt(formData.get('endPage'), 10);
+            const errorDiv = document.getElementById('error');
+
+            if (startPage > endPage) {
+                errorDiv.textContent = 'Start page cannot be greater than end page.';
+                return;
+            }
+
+            errorDiv.textContent = '';
+            this.submit();
+        });
+
+        document.getElementById('clearDatabase').addEventListener('click', function() {
+            fetch("/clear_temp_db")
+                .then(response => alert("Cleared"))
+                .catch(error => alert("Error happened"));
+        });
+
+        document.getElementById('downloadDatabase').addEventListener('click', function() {
+            window.location.href = "/download_db";
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('dbFile');
+            if (!fileInput.files.length) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("dbFile", fileInput.files[0]);
+
+            fetch("https://senior-design-project.onrender.com/upload_db", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => alert("Upload failed: " + error));
+        });
+    </script>
+</body>
+</html>

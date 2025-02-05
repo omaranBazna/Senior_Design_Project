@@ -316,19 +316,20 @@ def extractTableRow(row,table_cells,driver,extracted_rows):
     #print("------")
 
 
-def extractPageData(driver,table_cells ,extracted_row,extracted_page):
+def extractPageData(driver,table_cells ,extracted_row,extracted_page,startPage,endPage):
     time.sleep(1)
     try:
         table = driver.find_element(by=By.TAG_NAME,value="tbody")
         rows = table.find_elements(By.TAG_NAME, "tr")
         subjects_dic["extracted_page"] = extracted_page[0]
         extracted_page[0] += 1
-        if(extracted_page[0]>-1):  # change to set start page
+        if(extracted_page[0]>=int(startPage) and extracted_page[0]<= int(endPage)):  # change to set start page
             for _ , row in enumerate(rows):
                  extractTableRow(row,table_cells,driver,extracted_row[0])
                  extracted_row[0] += 1
                  InsertElementToSQL(table_cells[-1])
-
+        if(extracted_page[0]> int(endPage)):
+            return
         time.sleep(1)
         next_button = driver.find_element(by=By.CLASS_NAME,value="next")
         next_button.click()
@@ -336,11 +337,11 @@ def extractPageData(driver,table_cells ,extracted_row,extracted_page):
         print(str(e))
 
 
-def extractData(url,semester,major):
+def extractData(url,semester,major,startPage,endPage):
     driver = get_driver(url)    
     drop_down = search_for_semester(driver,semester)
     click_search_button(driver,drop_down,major)
-    set_per_page(driver)
+    #set_per_page(driver)
     time.sleep(1)
     add_log_window(driver )
     count = get_pages_count(driver)
@@ -349,7 +350,7 @@ def extractData(url,semester,major):
     extracted_page = [0]
     for _ in range(count):
         time.sleep(1)
-        extractPageData(driver,table_cells,extracted_row,extracted_page)
+        extractPageData(driver,table_cells,extracted_row,extracted_page,startPage,endPage)
 
     #print(subjects_dic)
     makeExcel(table_cells)

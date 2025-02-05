@@ -1,5 +1,5 @@
-from flask import Flask, request, redirect, url_for, render_template
-from sql_client import get_all_elements,find_element,find_element_by_attr_only,get_attr_list_elements
+from flask import Flask, request, redirect, url_for, render_template, send_file
+from sql_client import clear_all, get_all_elements,find_element,find_element_by_attr_only,get_attr_list_elements
 from extract_evaluation import process_student_profile,check_if_pre_req_met
 import os
 import json
@@ -7,8 +7,8 @@ from flask_cors import CORS
 from flask_cors import cross_origin
 app = Flask(__name__)
 from data import extractData
-
-CORS(app, resources={r"/*": {"origins": ["https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app","http://localhost:3000","https://lovely-nasturtium-ed889c.netlify.app"]}})
+import shutil
+CORS(app, resources={r"/*": {"origins": ["https://cozy-palmier-adb113.netlify.app","https://thunderous-tartufo-7ce2f7.netlify.app", "https://senior-design-project.onrender.com","https://astounding-baklava-6ad077.netlify.app","http://localhost:3000","http://localhost:8000","https://lovely-nasturtium-ed889c.netlify.app"]}})
 
 
 
@@ -40,9 +40,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
-
-def index():
-    return "I am up and healthy 😀"
+def home():
+    return render_template('index.html')  # Renders the HTML file
 
 @app.route("/data")
 def get_all_data():
@@ -135,13 +134,57 @@ def check_attr():
 def create_db():
     year = request.form.get('year')
     semester = request.form.get('semester')
+    startPage= request.form.get("startPage")
+    endPage = request.form.get("endPage")
     
     url = "https://reg-prod.ec.udmercy.edu/StudentRegistrationSsb/ssb/classSearch/classSearch"
     major = ""
 
-    extractData(url,semester+" "+year,major)
+    extractData(url,semester+" "+year,major,startPage,endPage)
+    return {"msg":"success"}
+
+@app.route('/clear_temp_db', methods=['GET'])
+def clear_temp_db():
+    clear_all()
+    return {"msg":"success"}
+
+
+
+@app.route('/download_db', methods=['GET'])
+def download_temp_db():
+    file_path = "./temp.db"  # Ensure this file exists
+    return send_file(file_path, as_attachment=True)
+
+
+
+
+
+@app.route('/upload_db', methods=['POST'])
+def upload_db():
+    if 'dbFile' not in request.files:
+        return "No file part", 400
+
+    file = request.files['dbFile']
+    if file.filename == '':
+        return "No selected file", 400
+
+    file_path = "persistant.db"  # Save as persistent.db in the root folder
+    file.save(file_path)
     
-    
+    return "Database file uploaded successfully as persistent.db"
+
+@app.route("/reset_2024", methods=["GET"])
+def reset_2024():
+    source_file = "database_2.db"
+    destination_file = "persistant.db"
+
+    try:
+        shutil.copy(source_file, destination_file)
+        return "Database reset successfully.", 200
+    except FileNotFoundError:
+        return "Source database file not found.", 404
+    except Exception as e:
+        return f"Error: {str(e)}", 500
 
 
 @app.route("/get-attr-list",methods=["GET"])
